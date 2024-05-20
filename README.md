@@ -24,5 +24,4 @@ Demo Agency Website
 - HTML
 - CSS
 - JavaScript
-- Bootstrap (v5.3.0-alpha1)
 
