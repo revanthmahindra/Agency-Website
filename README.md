@@ -23,5 +23,5 @@ Demo Agency Website
 
 - HTML
 - CSS
-- JavaScript
+- Bootstrap
 
