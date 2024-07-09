@@ -42,6 +42,7 @@ nav a {
     border-radius: 56px;
 }
 
+
 footer {
     background-color: #333;
     color: #fff;
@@ -50,4 +51,188 @@ footer {
     margin-top: 20px;
 }
 
+
+/* Additional styles for booking service section */
+.container.modal {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+#book-service-btn,#continue-to-payment{
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#card-element {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+#submit-payment,#go-back {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#submit-payment:hover {
+    background-color: #0056b3;
+}
+.plan-options {
+    margin-bottom: 10px;
+}
+.plan-options label {
+    display: block;
+    margin-bottom: 5px;
+}
+.timer {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+
+
+.chat-container {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: none; /* Initially hidden */
+    position: fixed; /* Make it appear above other content */
+    bottom: 80px; /* Position it above the chat icon */
+    right: 20px; /* Position it to the right */
+    background-color: white; /* Background color for the chat container */
+    z-index: 1000; /* Ensure it's above other elements */
+}
+
+.chat-log {
+    height: 300px;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.user-input {
+    width: calc(100% - 60px);
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn-send {
+    width: 50px;
+    padding: 5px;
+    margin-left: 10px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Chat Icon */
+#chat-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #007bff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; /* Ensure it's above other elements */
+}
+
+#chat-icon img {
+    width: 30px;
+    height: 30px;
+    border: none;
+}
+
+
+
+
+.logo-img {
+    width: 50px; 
+    height: 50px; 
+    margin-right: 10px; 
+}
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.card-body {
+    flex-grow: 1;
+}
+.card-img-top {
+    width: 100%;
+    height: auto;
+}
+
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+footer p {
+    margin: 0;
+}
+footer a {
+    color: #2f5bd2;
+    text-decoration: none;
+}
+footer a:hover {
+    text-decoration: underline;
+}
 
