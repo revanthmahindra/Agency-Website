@@ -7,39 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
     <style>
-        .logo-img {
-            width: 50px; /* Adjust the width as needed */
-            height: 50px; /* Adjust the height as needed */
-            margin-right: 10px; /* Adjust margin as needed */
-        }
-        .card {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .card-body {
-            flex-grow: 1;
-        }
-        .card-img-top {
-            width: 100%;
-            height: auto;
-        }
-        footer {
-            background-color: #343a40;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-        }
-        footer p {
-            margin: 0;
-        }
-        footer a {
-            color: #ffc107;
-            text-decoration: none;
-        }
-        footer a:hover {
-            text-decoration: underline;
-        }
+        
     </style>
 </head>
 <body>
@@ -87,7 +55,7 @@
             <p>With a focus on quality, reliability, and customer satisfaction, we strive to build long-term relationships with our clients and become their trusted partners in growth.</p>
         </div>
         <div class="col-lg-6">
-            <img src="Assets/about-image.jpg" class="img-fluid" alt="About Us Image">
+            <img src="Assets/about-img.jpg" class="img-fluid" alt="About us Img">
         </div>
     </div>
 </section>
@@ -164,6 +132,253 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </section>
+
+<!-- Example section for booking service -->
+<section id="book-service-section">
+    <div class="container">
+        <h2>Book a Service</h2>
+        <p>Select a service and proceed to booking:</p>
+        <div id="booking-form">
+            <select id="service-select">
+                <option value="web-development">Web Development</option>
+                <option value="digital-marketing">Digital Marketing</option>
+                <option value="graphic-design">Graphic Design</option>
+            </select>
+            <button id="book-service-btn">Book Service</button>
+        </div>
+    </div>
+</section>
+
+<!-- Modal for plan selection and payment (hidden by default) -->
+<div id="payment-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="plan-selection">
+            <h3>Select a Plan</h3>
+            <div class="timer" id="timer">Offer expires in: 02:00:00</div>
+            <div class="plan-options">
+                <label>
+                    <input type="radio" name="plan" value="1-month" data-amount="1000"> 1 Month - $10
+                </label>
+                <label>
+                    <input type="radio" name="plan" value="3-months" data-amount="2700"> 3 Months - $27
+                </label>
+                <label>
+                    <input type="radio" name="plan" value="6-months" data-amount="5000"> 6 Months - $50
+                </label>
+                <label>
+                    <input type="radio" name="plan" value="12-months" data-amount="9000"> 12 Months - $90
+                </label>
+            </div>
+            <button id="continue-to-payment">Continue to Payment</button>
+        </div>
+        <div id="payment-form" style="display: none;">
+            <h3>Enter Payment Details</h3>
+            <div id="card-element"><!-- Stripe Elements Placeholder --></div>
+            <!-- Used to display form errors -->
+            <div id="card-errors" role="alert"></div>
+            <button id="go-back">Go Back</button>
+            <button id="submit-payment">Pay Now</button>
+        </div>
+    </div>
+</div>
+
+<!-- Include Stripe.js -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    var stripe = Stripe('your_stripe_publishable_key');
+    var elements = stripe.elements();
+    var cardElement = elements.create('card');
+    cardElement.mount('#card-element');
+    
+    // Handle modal actions
+    var modal = document.getElementById('payment-modal');
+    var closeButton = document.getElementsByClassName('close')[0];
+    var bookServiceButton = document.getElementById('book-service-btn');
+    var continueToPaymentButton = document.getElementById('continue-to-payment');
+    var goBackButton = document.getElementById('go-back');
+    var planSelectionDiv = document.getElementById('plan-selection');
+    var paymentFormDiv = document.getElementById('payment-form');
+    var timerElement = document.getElementById('timer');
+    var timerInterval;
+    
+    bookServiceButton.onclick = function() {
+        modal.style.display = "block";
+        startTimer();
+    }
+    
+    closeButton.onclick = function() {
+        modal.style.display = "none";
+        clearInterval(timerInterval);
+    }
+    
+    // Close the modal if the user clicks outside of it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+            clearInterval(timerInterval);
+        }
+    }
+    
+    continueToPaymentButton.onclick = function() {
+        var selectedPlan = document.querySelector('input[name="plan"]:checked');
+        if (!selectedPlan) {
+            alert('Please select a plan.');
+            return;
+        }
+        paymentFormDiv.style.display = 'block';
+        planSelectionDiv.style.display = 'none';
+    }
+    
+    goBackButton.onclick = function() {
+        paymentFormDiv.style.display = 'none';
+        planSelectionDiv.style.display = 'block';
+    }
+    
+    // Handle payment submission
+    document.getElementById('submit-payment').onclick = function(event) {
+        event.preventDefault();
+        var selectedPlan = document.querySelector('input[name="plan"]:checked');
+        var amount = selectedPlan.getAttribute('data-amount');
+        stripe.createToken(cardElement).then(function(result) {
+            if (result.error) {
+                // Inform the user if there was an error
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                // Send the token to your server
+                stripeTokenHandler(result.token, amount);
+            }
+        });
+    };
+    
+    function stripeTokenHandler(token, amount) {
+        // Pass the token to your server to process the payment
+        fetch('/create-payment-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amount, currency: 'usd' }) // Example amount and currency
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Use the client secret to complete the payment
+            stripe.confirmCardPayment(data.clientSecret, {
+                payment_method: {
+                    card: cardElement
+                }
+            }).then(function(result) {
+                if (result.error) {
+                    // Show error to your customer
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    // Payment succeeded!
+                    console.log(result.paymentIntent);
+                    // Handle success scenario (e.g., display success message)
+                    alert('Payment successful!');
+                    modal.style.display = "none"; // Close the modal after successful payment
+                    clearInterval(timerInterval);
+                }
+            });
+        });
+    }
+
+    // Timer functionality
+    function startTimer() {
+        var timeRemaining = 2 * 60 * 60; // 2 hours in seconds
+        timerInterval = setInterval(function() {
+            var hours = Math.floor(timeRemaining / 3600);
+            var minutes = Math.floor((timeRemaining % 3600) / 60);
+            var seconds = timeRemaining % 60;
+
+            timerElement.textContent = 'Offer expires in: ' + 
+                (hours < 10 ? '0' : '') + hours + ':' +
+                (minutes < 10 ? '0' : '') + minutes + ':' +
+                (seconds < 10 ? '0' : '') + seconds;
+
+            timeRemaining--;
+
+            if (timeRemaining < 0) {
+                clearInterval(timerInterval);
+                timerElement.textContent = 'Offer has expired!';
+                document.querySelectorAll('input[name="plan"]').forEach(function(input) {
+                    input.disabled = true;
+                });
+                continueToPaymentButton.disabled = true;
+            }
+        }, 1000);
+    }
+</script>
+
+
+<!-- Chat Icon -->
+<button id="chat-icon" onclick="toggleChat()">
+    <img src="Assets/chat-icon.png" alt="Chat Icon">
+</button>
+
+<!-- Chat Container -->
+<div class="chat-container" id="chat-container">
+    <div class="chat-log" id="chat-log">
+        <!-- Chat messages will be displayed here -->
+    </div>
+    <div>
+        <input type="text" id="user-input" class="user-input" placeholder="Type your message...">
+        <button type="button" class="btn-send" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<!-- Dialogflow SDK Script -->
+<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js"></script>
+<script>
+    // Initialize Dialogflow Messenger
+    window.dfMessenger = window.dfMessenger || (function () {
+        window.dfMessengerConfig = {
+            integrationID: "your_integration_id", // Replace with your Dialogflow Messenger integration ID
+            region: "us-central1", // Replace with your Dialogflow region
+        };
+        var e = document.createElement("script");
+        e.src = "https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js";
+        e.onload = function () {
+            dfMessengerConfig && dfMessenger.init(dfMessengerConfig);
+        };
+        document.head.appendChild(e);
+    })();
+    
+    // Function to send user message to Dialogflow
+    function sendMessage() {
+        var userInput = document.getElementById('user-input').value;
+        if (userInput.trim() === '') return;
+
+        // Display user message in chat log
+        var chatLog = document.getElementById('chat-log');
+        var userMessage = document.createElement('div');
+        userMessage.className = 'user-message';
+        userMessage.innerHTML = '<strong>You:</strong> ' + userInput;
+        chatLog.appendChild(userMessage);
+
+        // Send user message to Dialogflow
+        dfMessenger.sendText(userInput);
+
+        // Clear input field
+        document.getElementById('user-input').value = '';
+    }
+
+    // Function to toggle chat interface visibility
+    function toggleChat() {
+        var chatContainer = document.getElementById('chat-container');
+        if (chatContainer.style.display === "none" || chatContainer.style.display === "") {
+            chatContainer.style.display = "block";
+        } else {
+            chatContainer.style.display = "none";
+        }
+    }
+
+    // Initialize chat container as hidden
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('chat-container').style.display = 'none';
+    });
+</script>
+
 
 <footer class="bg-dark text-white text-center p-3 mt-5">
     <p>&copy; 2024 Rev Agency. All rights reserved. | <a href="privacy-policy.html" target="_blank">Privacy Policy</a></p>
